@@ -1,0 +1,68 @@
+<nav class="sidebar">
+    <div class="sidebar-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center;">
+            <img src="/images/logow.png" alt="Seed Logo" style="width: 35px; height: auto; margin-right: 10px;">
+            <h2 style="color: white; margin: 0;">Seed</h2>
+        </div>
+        <button class="btn btn-link text-white d-lg-none" id="sidebarToggle">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link <%= path === '/' ? 'active' : '' %>" href="/">
+                <i class="bi bi-house-door-fill"></i>
+                Home
+            </a>
+        </li>
+        <% if (user) { %>
+        <li class="nav-item">
+            <a class="nav-link <%= path === '/servers' ? 'active' : '' %>" href="/servers">
+                <i class="bi bi-gear-fill"></i>
+                My Servers
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <%= path === '/shop' ? 'active' : '' %>" href="/shop">
+                <i class="bi bi-cart-fill"></i>
+                Shop
+            </a>
+        </li>
+        <% if (user && user.id === BOT_OWNER_ID) { %>
+        <li class="nav-item">
+            <a class="nav-link <%= path === '/admin' ? 'active' : '' %>" href="/admin">
+                <i class="bi bi-tools"></i>
+                Admin Dashboard
+            </a>
+        </li>
+        <% } %>
+        <% } %>
+        <li class="nav-item">
+            <a class="nav-link <%= path === '/leaderboard' ? 'active' : '' %>" href="/leaderboard">
+                <i class="bi bi-trophy-fill"></i>
+                Leaderboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <%= path === '/info' ? 'active' : '' %>" href="/info">
+                <i class="bi bi-info-circle-fill"></i>
+                Info
+            </a>
+        </li>
+    </ul>
+    <div class="user-profile">
+        <% if (user) { %>
+            <div class="user-details">
+                <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=64" alt="User Avatar" class="user-avatar">
+                <span class="user-name"><%= user.username %></span>
+            </div>
+            <a href="/profile" class="btn btn-primary btn-sm mt-2 d-block mx-auto">View Profile</a>
+        <% } else { %>
+            <a href="/auth/discord" class="btn btn-login">Login with Discord</a>
+        <% } %>
+    </div>
+</nav>
+<main class="main-content">
+    <button class="btn mobile-sidebar-toggle text-white d-lg-none" id="contentSidebarToggle">
+        <i class="bi bi-list"></i>
+    </button>

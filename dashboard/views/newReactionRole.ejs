@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="container mt-4">
+    <h2>Create New Reaction Role Message</h2>
+    <form action="/servers/<%= currentGuild.id %>/reaction-roles/new" method="POST">
+        <div class="mb-3">
+            <label for="channel" class="form-label">Channel</label>
+            <select class="form-select" id="channel" name="channel" required>
+                <option value="">Select Channel</option>
+                <% channels.forEach(channel => { %>
+                    <% if (channel.type === 0) { %> <!-- 0 is GUILD_TEXT -->
+                        <option value="<%= channel.id %>"><%= channel.name %></option>
+                    <% } %>
+                <% }); %>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="title" class="form-label">Embed Title</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Embed Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Message</button>
+    </form>
+</div>
+
+<%- include('partials/footer') %>

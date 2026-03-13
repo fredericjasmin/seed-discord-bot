@@ -1,0 +1,816 @@
+</div>
+
+
+<%- include('partials/header') %>
+    <%- include('partials/navbar') %>
+
+        <div class="container mt-4">
+            <div id="alert-placeholder"></div>
+            <h2>Server Settings: <%= currentGuild.name %>
+            </h2>
+
+            <!-- Welcome Message Settings -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    Welcome Messages
+                </div>
+                <div class="card-body">
+                    <form action="/servers/<%= currentGuild.id %>/settings" method="POST">
+                        <input type="hidden" name="settingType" value="welcome">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="welcomeEnabled" name="welcomeEnabled"
+                                <%=guild.config.welcome.enabled ? 'checked' : '' %>>
+                            <label class="form-check-label" for="welcomeEnabled">Enable Welcome Messages</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="welcomeChannel" class="form-label">Welcome Channel</label>
+                            <select class="form-select" id="welcomeChannel" name="welcomeChannel">
+                                <option value="">Select Channel</option>
+                                <% channels.forEach(channel=> { %>
+                                    <% if (channel.type===0) { %> <!-- 0 is GUILD_TEXT -->
+                                        <option value="<%= channel.id %>" <%=guild.config.welcome.channelId===channel.id
+                                            ? 'selected' : '' %>><%= channel.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="welcomeMessage" class="form-label">Welcome Message (Plain Text)</label>
+                            <textarea class="form-control" id="welcomeMessage" name="welcomeMessage"
+                                rows="3"><%= guild.config.welcome.message %></textarea>
+                            <small class="form-text text-muted">Placeholders: {user.mention}, {user.tag}, {guild.name},
+                                {guild.memberCount}</small>
+                        </div>
+
+                        <hr>
+
+                        <h5>Embed Settings</h5>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="welcomeUseEmbed" name="welcomeUseEmbed"
+                                <%=guild.config.welcome.useEmbed ? 'checked' : '' %>>
+                            <label class="form-check-label" for="welcomeUseEmbed">Use Embed</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="welcomeEmbedColor" class="form-label">Embed Color</label>
+                                <input type="color" class="form-control form-control-color" id="welcomeEmbedColor"
+                                    name="welcomeEmbedColor" value="<%= guild.config.welcome.embedColor %>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="welcomeEmbedTitle" class="form-label">Embed Title</label>
+                                <input type="text" class="form-control" id="welcomeEmbedTitle" name="welcomeEmbedTitle"
+                                    value="<%= guild.config.welcome.embedTitle %>">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="welcomeEmbedDescription" class="form-label">Embed Description</label>
+                            <textarea class="form-control" id="welcomeEmbedDescription" name="welcomeEmbedDescription"
+                                rows="3"><%= guild.config.welcome.embedDescription %></textarea>
+                            <small class="form-text text-muted">Placeholders: {user.mention}, {user.tag}, {guild.name},
+                                {guild.memberCount}</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="welcomeEmbedFooter" class="form-label">Embed Footer</label>
+                            <input type="text" class="form-control" id="welcomeEmbedFooter" name="welcomeEmbedFooter"
+                                value="<%= guild.config.welcome.embedFooter %>">
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="welcomeEmbedThumbnail"
+                                name="welcomeEmbedThumbnail" <%=guild.config.welcome.embedThumbnail ? 'checked' : '' %>>
+                            <label class="form-check-label" for="welcomeEmbedThumbnail">Use User Avatar as
+                                Thumbnail</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="welcomeEmbedImage" class="form-label">Embed Image URL</label>
+                            <input type="text" class="form-control" id="welcomeEmbedImage" name="welcomeEmbedImage"
+                                value="<%= guild.config.welcome.embedImage %>">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Welcome Settings</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Farewell Message Settings -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    Farewell Messages
+                </div>
+                <div class="card-body">
+                    <form action="/servers/<%= currentGuild.id %>/settings" method="POST">
+                        <input type="hidden" name="settingType" value="farewell">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="farewellEnabled" name="farewellEnabled"
+                                <%=guild.config.farewell.enabled ? 'checked' : '' %>>
+                            <label class="form-check-label" for="farewellEnabled">Enable Farewell Messages</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="farewellChannel" class="form-label">Farewell Channel</label>
+                            <select class="form-select" id="farewellChannel" name="farewellChannel">
+                                <option value="">Select Channel</option>
+                                <% channels.forEach(channel=> { %>
+                                    <% if (channel.type===0) { %> <!-- 0 is GUILD_TEXT -->
+                                        <option value="<%= channel.id %>"
+                                            <%=guild.config.farewell.channelId===channel.id ? 'selected' : '' %>><%=
+                                                channel.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="farewellMessage" class="form-label">Farewell Message (Plain Text)</label>
+                            <textarea class="form-control" id="farewellMessage" name="farewellMessage"
+                                rows="3"><%= guild.config.farewell.message %></textarea>
+                            <small class="form-text text-muted">Placeholders: {user.tag}, {guild.name},
+                                {guild.memberCount}</small>
+                        </div>
+
+                        <hr>
+
+                        <h5>Embed Settings</h5>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="farewellUseEmbed"
+                                name="farewellUseEmbed" <%=guild.config.farewell.useEmbed ? 'checked' : '' %>>
+                            <label class="form-check-label" for="farewellUseEmbed">Use Embed</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="farewellEmbedColor" class="form-label">Embed Color</label>
+                                <input type="color" class="form-control form-control-color" id="farewellEmbedColor"
+                                    name="farewellEmbedColor" value="<%= guild.config.farewell.embedColor %>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="farewellEmbedTitle" class="form-label">Embed Title</label>
+                                <input type="text" class="form-control" id="farewellEmbedTitle"
+                                    name="farewellEmbedTitle" value="<%= guild.config.farewell.embedTitle %>">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="farewellEmbedDescription" class="form-label">Embed Description</label>
+                            <textarea class="form-control" id="farewellEmbedDescription" name="farewellEmbedDescription"
+                                rows="3"><%= guild.config.farewell.embedDescription %></textarea>
+                            <small class="form-text text-muted">Placeholders: {user.tag}, {guild.name},
+                                {guild.memberCount}</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="farewellEmbedFooter" class="form-label">Embed Footer</label>
+                            <input type="text" class="form-control" id="farewellEmbedFooter" name="farewellEmbedFooter"
+                                value="<%= guild.config.farewell.embedFooter %>">
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="farewellEmbedThumbnail"
+                                name="farewellEmbedThumbnail" <%=guild.config.farewell.embedThumbnail ? 'checked' : ''
+                                %>>
+                            <label class="form-check-label" for="farewellEmbedThumbnail">Use User Avatar as
+                                Thumbnail</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="farewellEmbedImage" class="form-label">Embed Image URL</label>
+                            <input type="text" class="form-control" id="farewellEmbedImage" name="farewellEmbedImage"
+                                value="<%= guild.config.farewell.embedImage %>">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Farewell Settings</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Auto Role Settings -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    Auto Role
+                </div>
+                <div class="card-body">
+                    <form action="/servers/<%= currentGuild.id %>/settings" method="POST">
+                        <input type="hidden" name="settingType" value="autoRole">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="autoRoleEnabled" name="autoRoleEnabled"
+                                <%=guild.config.autoRole && guild.config.autoRole.enabled ? 'checked' : '' %>>
+                            <label class="form-check-label" for="autoRoleEnabled">Enable Auto Role</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="autoRoleRole" class="form-label">Role to Assign</label>
+                            <select class="form-select" id="autoRoleRole" name="autoRoleRole">
+                                <option value="">Select Role</option>
+                                <% roles.forEach(role=> { %>
+                                    <% if (!role.managed && role.name !=='@everyone' ) { %>
+                                        <option value="<%= role.id %>" <%=guild.config.autoRole &&
+                                            guild.config.autoRole.roleId===role.id ? 'selected' : '' %>><%= role.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Auto Role Settings</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reaction Roles Settings -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    Reaction Roles
+                </div>
+                <div class="card-body">
+                    <h5>Create New Reaction Role Message</h5>
+                    <form action="/servers/<%= currentGuild.id %>/settings" method="POST">
+                        <input type="hidden" name="settingType" value="reactionRoleCreate">
+                        <div class="mb-3">
+                            <label for="rrChannel" class="form-label">Channel</label>
+                            <select class="form-select" id="rrChannel" name="rrChannel" required>
+                                <option value="">Select Channel</option>
+                                <% channels.forEach(channel=> { %>
+                                    <% if (channel.type===0) { %> <!-- 0 is GUILD_TEXT -->
+                                        <option value="<%= channel.id %>">
+                                            <%= channel.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rrTitle" class="form-label">Embed Title</label>
+                            <input type="text" class="form-control" id="rrTitle" name="rrTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rrDescription" class="form-label">Embed Description</label>
+                            <textarea class="form-control" id="rrDescription" name="rrDescription" rows="3"
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Message</button>
+                    </form>
+
+                    <hr>
+
+                    <h5>Manage Existing Reaction Roles</h5>
+                    <% if (guild.config.reactionRoles && guild.config.reactionRoles.length> 0) { %>
+                        <% guild.config.reactionRoles.forEach(rr=> { %>
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">Message ID: <%= rr.messageId %>
+                                    </h6>
+                                    <p class="card-text">Channel: <%= channels.find(c=> c.id === rr.channelId) ? '#' +
+                                            channels.find(c => c.id === rr.channelId).name : 'Unknown' %></p>
+
+                                    <form action="/servers/<%= currentGuild.id %>/settings" method="POST" class="mb-3">
+                                        <input type="hidden" name="settingType" value="reactionRoleAdd">
+                                        <input type="hidden" name="messageId" value="<%= rr.messageId %>">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="rrEmoji" class="form-label">Emoji</label>
+                                                <input type="text" class="form-control" id="rrEmoji" name="rrEmoji"
+                                                    required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="rrRole" class="form-label">Role</label>
+                                                <select class="form-select" id="rrRole" name="rrRole" required>
+                                                    <option value="">Select Role</option>
+                                                    <% roles.forEach(role=> { %>
+                                                        <% if (!role.managed && role.name !=='@everyone' ) { %>
+                                                            <option value="<%= role.id %>">
+                                                                <%= role.name %>
+                                                            </option>
+                                                            <% } %>
+                                                                <% }); %>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 mb-3 d-flex align-items-end">
+                                                <button type="submit" class="btn btn-success">Add Role</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <% if (rr.reactions && rr.reactions.length> 0) { %>
+                                        <ul class="list-group">
+                                            <% rr.reactions.forEach(reaction=> { %>
+                                                <li
+                                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>
+                                                        <%= reaction.emoji %> -> <%= roles.find(r=> r.id ===
+                                                                reaction.roleId) ? '@' + roles.find(r => r.id ===
+                                                                reaction.roleId).name : 'Unknown' %>
+                                                    </span>
+                                                    <form action="/servers/<%= currentGuild.id %>/settings"
+                                                        method="POST">
+                                                        <input type="hidden" name="settingType"
+                                                            value="reactionRoleRemove">
+                                                        <input type="hidden" name="messageId"
+                                                            value="<%= rr.messageId %>">
+                                                        <input type="hidden" name="emoji" value="<%= reaction.emoji %>">
+                                                        <button type="submit"
+                                                            class="btn btn-danger btn-sm">Remove</button>
+                                                    </form>
+                                                </li>
+                                                <% }); %>
+                                        </ul>
+                                        <% } else { %>
+                                            <p>No reaction roles configured for this message.</p>
+                                            <% } %>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <p>No reaction role messages configured.</p>
+                                    <% } %>
+                </div>
+            </div>
+
+
+            <!-- Ticket System Configuration Panel -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    Ticket System Configuration
+                </div>
+                <div class="card-body">
+                    <form action="/servers/<%= currentGuild.id %>/settings" method="POST">
+                        <input type="hidden" name="settingType" value="ticketConfig">
+                        <div class="mb-3">
+                            <label for="panelButtonLabel" class="form-label">Panel Button Text</label>
+                            <input type="text" class="form-control" id="panelButtonLabel" name="panelButtonLabel"
+                                value="<%= guild.config.tickets && guild.config.tickets.panelButtonLabel ? guild.config.tickets.panelButtonLabel : 'Crear Ticket' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="panelButtonEmoji" class="form-label">Panel Button Emoji</label>
+                            <input type="text" class="form-control" id="panelButtonEmoji" name="panelButtonEmoji"
+                                value="<%= guild.config.tickets && guild.config.tickets.panelButtonEmoji ? guild.config.tickets.panelButtonEmoji : '📩' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="closeButtonLabel" class="form-label">Close Button Text</label>
+                            <input type="text" class="form-control" id="closeButtonLabel" name="closeButtonLabel"
+                                value="<%= guild.config.tickets && guild.config.tickets.closeButtonLabel ? guild.config.tickets.closeButtonLabel : 'Cerrar Ticket' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="closeButtonEmoji" class="form-label">Close Button Emoji</label>
+                            <input type="text" class="form-control" id="closeButtonEmoji" name="closeButtonEmoji"
+                                value="<%= guild.config.tickets && guild.config.tickets.closeButtonEmoji ? guild.config.tickets.closeButtonEmoji : '🔒' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketSupportRole" class="form-label">Support Role</label>
+                            <select class="form-select" id="ticketSupportRole" name="ticketSupportRole">
+                                <option value="">Select Role</option>
+                                <% roles.forEach(role=> { %>
+                                    <% if (!role.managed && role.name !=='@everyone' ) { %>
+                                        <option value="<%= role.id %>" <%=guild.config.tickets &&
+                                            guild.config.tickets.supportRoleId===role.id ? 'selected' : '' %>><%=
+                                                role.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketMentionRole" class="form-label">Role to Mention When Opening
+                                Ticket</label>
+                            <select class="form-select" id="ticketMentionRole" name="ticketMentionRole">
+                                <option value="">Select Role</option>
+                                <% roles.forEach(role=> { %>
+                                    <% if (!role.managed && role.name !=='@everyone' ) { %>
+                                        <option value="<%= role.id %>" <%=guild.config.tickets &&
+                                            Array.isArray(guild.config.tickets.mentionRoleIds) &&
+                                            guild.config.tickets.mentionRoleIds.includes(role.id) ? 'selected' : '' %>>
+                                            <%= role.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                            <small class="form-text text-muted">Selecciona un rol que será mencionado automáticamente al
+                                abrir un ticket.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketCategory" class="form-label">Ticket Category</label>
+                            <select class="form-select" id="ticketCategory" name="ticketCategory">
+                                <option value="">Select Category</option>
+                                <% channels.forEach(channel=> { %>
+                                    <% if (channel.type===4) { %> <!-- 4 is GUILD_CATEGORY -->
+                                        <option value="<%= channel.id %>" <%=guild.config.tickets &&
+                                            guild.config.tickets.categoryId===channel.id ? 'selected' : '' %>><%=
+                                                channel.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketPanelChannel" class="form-label">Panel Channel</label>
+                            <select class="form-select" id="ticketPanelChannel" name="ticketPanelChannel">
+                                <option value="">Select Channel</option>
+                                <% channels.forEach(channel=> { %>
+                                    <% if (channel.type===0) { %> <!-- 0 is GUILD_TEXT -->
+                                        <option value="<%= channel.id %>" <%=guild.config.tickets &&
+                                            guild.config.tickets.panelChannelId===channel.id ? 'selected' : '' %>><%=
+                                                channel.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketPanelTitle" class="form-label">Panel Embed Title</label>
+                            <input type="text" class="form-control" id="ticketPanelTitle" name="ticketPanelTitle"
+                                value="<%= guild.config.tickets && guild.config.tickets.panelTitle ? guild.config.tickets.panelTitle : 'Panel de Tickets' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketPanelEmbedColor" class="form-label">Panel Embed Color</label>
+                            <input type="color" class="form-control form-control-color" id="ticketPanelEmbedColor"
+                                name="ticketPanelEmbedColor"
+                                value="<%= guild.config.tickets && guild.config.tickets.panelEmbedColor ? guild.config.tickets.panelEmbedColor : '#00ff00' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketPanelMessage" class="form-label">Panel Message</label>
+                            <textarea class="form-control" id="ticketPanelMessage" name="ticketPanelMessage"
+                                rows="2"><%= guild.config.tickets && guild.config.tickets.panelMessage ? guild.config.tickets.panelMessage : '' %></textarea>
+                            <small class="form-text text-muted">This message will appear in the ticket panel. Example:
+                                "React to open a ticket!"</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketWelcomeTitle" class="form-label">Welcome Embed Title</label>
+                            <input type="text" class="form-control" id="ticketWelcomeTitle" name="ticketWelcomeTitle"
+                                value="<%= guild.config.tickets && guild.config.tickets.welcomeTitle ? guild.config.tickets.welcomeTitle : 'Ticket Creado' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketWelcomeEmbedColor" class="form-label">Welcome Message Embed Color</label>
+                            <input type="color" class="form-control form-control-color" id="ticketWelcomeEmbedColor"
+                                name="ticketWelcomeEmbedColor"
+                                value="<%= guild.config.tickets && guild.config.tickets.welcomeEmbedColor ? guild.config.tickets.welcomeEmbedColor : '#00ff00' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="ticketWelcomeMessage" class="form-label">Ticket Welcome Message</label>
+                            <textarea class="form-control" id="ticketWelcomeMessage" name="ticketWelcomeMessage"
+                                rows="3"><%= guild.config.tickets && guild.config.tickets.ticketWelcomeMessage ? guild.config.tickets.ticketWelcomeMessage : '' %></textarea>
+                            <small class="form-text text-muted">This message will be sent when a new ticket is opened.
+                                Use `{user.mention}` to mention the user.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxTicketsPerUser" class="form-label">Max Tickets Per User</label>
+                            <input type="number" class="form-control" id="maxTicketsPerUser" name="maxTicketsPerUser"
+                                min="1"
+                                value="<%= guild.config.tickets && guild.config.tickets.maxTicketsPerUser ? guild.config.tickets.maxTicketsPerUser : 1 %>">
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="sendTicketCreationMessage"
+                                name="sendTicketCreationMessage" <%=guild.config.tickets &&
+                                guild.config.tickets.sendTicketCreationMessage ? 'checked' : '' %>>
+                            <label class="form-check-label" for="sendTicketCreationMessage">Send Ticket Creation
+                                Message</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Ticket Configuration</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Server Logs Configuration Panel -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    Server Logs
+                </div>
+                <div class="card-body">
+                    <form action="/servers/<%= currentGuild.id %>/settings" method="POST">
+                        <input type="hidden" name="settingType" value="loggingConfig">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="logsEnabled" name="logsEnabled"
+                                <%=guild.config.logging && guild.config.logging.enabled ? 'checked' : '' %>>
+                            <label class="form-check-label" for="logsEnabled">Enable Server Logs</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="logsChannel" class="form-label">Logs Channel</label>
+                            <select class="form-select" id="logsChannel" name="logsChannel">
+                                <option value="">Select Channel</option>
+                                <% channels.forEach(channel=> { %>
+                                    <% if (channel.type===0) { %> <!-- 0 is GUILD_TEXT -->
+                                        <option value="<%= channel.id %>" <%=guild.config.logging &&
+                                            guild.config.logging.channelId===channel.id ? 'selected' : '' %>><%=
+                                                channel.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <label class="form-label">Log Types</label>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="logMessageUpdates"
+                                        name="logMessageUpdates" <%=guild.config.logging &&
+                                        guild.config.logging.logMessageUpdates ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="logMessageUpdates">Message Edits</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="logMessageDeletes"
+                                        name="logMessageDeletes" <%=guild.config.logging &&
+                                        guild.config.logging.logMessageDeletes ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="logMessageDeletes">Message Deletes</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="logMemberUpdates"
+                                        name="logMemberUpdates" <%=guild.config.logging &&
+                                        guild.config.logging.logMemberUpdates ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="logMemberUpdates">Member Updates</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="logChannelUpdates"
+                                        name="logChannelUpdates" <%=guild.config.logging &&
+                                        guild.config.logging.logChannelUpdates ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="logChannelUpdates">Channel Events</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="logRoleUpdates"
+                                        name="logRoleUpdates" <%=guild.config.logging &&
+                                        guild.config.logging.logRoleUpdates ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="logRoleUpdates">Role Events</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="logBanEvents"
+                                        name="logBanEvents" <%=guild.config.logging && guild.config.logging.logBanEvents
+                                        ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="logBanEvents">Ban Events</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="logKickEvents"
+                                        name="logKickEvents" <%=guild.config.logging &&
+                                        guild.config.logging.logKickEvents ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="logKickEvents">Kick Events</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="logWarnEvents"
+                                        name="logWarnEvents" <%=guild.config.logging &&
+                                        guild.config.logging.logWarnEvents ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="logWarnEvents">Warn Events</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Server Logs Settings</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Giveaways Panel -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    Giveaways
+                </div>
+                <div class="card-body">
+                    <h5>Create New Giveaway</h5>
+                    <form action="/servers/<%= currentGuild.id %>/giveaways" method="POST">
+                        <div class="mb-3">
+                            <label for="giveawayPrize" class="form-label">Prize</label>
+                            <input type="text" class="form-control" id="giveawayPrize" name="prize" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="giveawayWinners" class="form-label">Number of Winners</label>
+                            <input type="number" class="form-control" id="giveawayWinners" name="winners" min="1"
+                                value="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="giveawayChannel" class="form-label">Channel</label>
+                            <select class="form-select" id="giveawayChannel" name="channelId" required>
+                                <option value="">Select Channel</option>
+                                <% channels.forEach(channel=> { %>
+                                    <% if (channel.type===0) { %>
+                                        <option value="<%= channel.id %>">
+                                            <%= channel.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="giveawayDuration" class="form-label">Duration</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="giveawayDuration" name="durationValue"
+                                    min="1" value="60" required>
+                                <select class="form-select" id="giveawayDurationUnit" name="durationUnit" required>
+                                    <option value="minutes" selected>Minutes</option>
+                                    <option value="hours">Hours</option>
+                                    <option value="days">Days</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Create Giveaway</button>
+                    </form>
+                    <hr>
+                    <h5>Active Giveaways</h5>
+                    <% if (typeof giveaways !=='undefined' && giveaways.length> 0) { %>
+                        <ul class="list-group">
+                            <% giveaways.forEach(gw=> { %>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <strong>Prize:</strong>
+                                        <%= gw.prize %> | <strong>Winners:</strong>
+                                            <%= gw.winners %> | <strong>Ends:</strong>
+                                                <%= gw.endAt.toLocaleString() %>
+                                    </span>
+                                    <span>
+                                        <strong>Status:</strong>
+                                        <%= gw.ended ? 'Ended' : 'Active' %>
+                                            <% if (!gw.ended) { %>
+                                                <form
+                                                    action="/servers/<%= currentGuild.id %>/giveaways/<%= gw._id %>/end"
+                                                    method="POST" style="display:inline;">
+                                                    <button type="submit" class="btn btn-danger btn-sm ms-2">End
+                                                        Now</button>
+                                                </form>
+                                                <% } else if (gw.winnerIds && gw.winnerIds.length> 0) { %>
+                                                    <span class="ms-2">Winners: <%= gw.winnerIds.map(id=> `<@${id}>
+                                                                `).join(', ') %></span>
+                                                    <% } %>
+                                    </span>
+                                </li>
+                                <% }); %>
+                        </ul>
+                        <% } else { %>
+                            <p>No active giveaways.</p>
+                            <% } %>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    AutoMod
+                </div>
+                <div class="card-body">
+                    <form action="/servers/<%= currentGuild.id %>/settings" method="POST">
+                        <input type="hidden" name="settingType" value="automodConfig">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="automodEnabled" name="automodEnabled"
+                                <%=guild.config.automod && guild.config.automod.enabled ? 'checked' : '' %>>
+                            <label class="form-check-label" for="automodEnabled">Enable AutoMod</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="automodFilterWords" class="form-label">Palabras prohibidas (separadas por
+                                coma)</label>
+                            <input type="text" class="form-control" id="automodFilterWords" name="automodFilterWords"
+                                value="<%= guild.config.automod && guild.config.automod.filterWords ? guild.config.automod.filterWords.join(', ') : '' %>">
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="automodFilterInvites"
+                                name="automodFilterInvites" <%=guild.config.automod &&
+                                guild.config.automod.filterInvites ? 'checked' : '' %>>
+                            <label class="form-check-label" for="automodFilterInvites">Bloquear invitaciones de
+                                Discord</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="automodFilterLinks"
+                                name="automodFilterLinks" <%=guild.config.automod && guild.config.automod.filterLinks
+                                ? 'checked' : '' %>>
+                            <label class="form-check-label" for="automodFilterLinks">Bloquear links</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="automodFilterCaps"
+                                name="automodFilterCaps" <%=guild.config.automod && guild.config.automod.filterCaps
+                                ? 'checked' : '' %>>
+                            <label class="form-check-label" for="automodFilterCaps">Bloquear abuso de mayúsculas</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="automodCapsThreshold" class="form-label">Porcentaje de mayúsculas permitido
+                                (%)</label>
+                            <input type="number" class="form-control" id="automodCapsThreshold"
+                                name="automodCapsThreshold" min="50" max="100"
+                                value="<%= guild.config.automod && guild.config.automod.capsThreshold ? guild.config.automod.capsThreshold : 70 %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="automodAction" class="form-label">Acción</label>
+                            <select class="form-select" id="automodAction" name="automodAction">
+                                <option value="delete" <%=guild.config.automod && guild.config.automod.action==='delete' ? 'selected' : '' %>>Eliminar mensaje</option>
+                                <option value="warn" <%=guild.config.automod && guild.config.automod.action==='warn' ? 'selected' : '' %>>Advertir usuario</option>
+                                <option value="mute" <%=guild.config.automod && guild.config.automod.action==='mute' ? 'selected' : '' %>>Mutear usuario</option>
+                                <option value="kick" <%=guild.config.automod && guild.config.automod.action==='kick' ? 'selected' : '' %>>Expulsar usuario</option>
+                                <option value="ban" <%=guild.config.automod && guild.config.automod.action==='ban' ? 'selected' : '' %>>Banear usuario</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="automodApplyToRoles" class="form-label">Aplicar solo a roles (opcional)</label>
+                            <select class="form-select" id="automodApplyToRoles" name="automodApplyToRoles" multiple>
+                                <% roles.forEach(role => { %>
+                                    <% if (role.name !== '@everyone') { %>
+                                    <option value="<%= role.id %>" <%= guild.config.automod && Array.isArray(guild.config.automod.applyToRoles) && guild.config.automod.applyToRoles.includes(role.id) ? 'selected' : '' %>><%= role.name %></option>
+                                    <% } %>
+                                <% }); %>
+                            </select>
+                            <div id="applyToRolesSelected" class="mt-1 text-secondary small"></div>
+                            <small class="form-text text-muted">Si seleccionas roles, solo se aplicará a esos roles.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="automodIgnoreRoles" class="form-label">Ignorar roles (opcional)</label>
+                            <select class="form-select" id="automodIgnoreRoles" name="automodIgnoreRoles" multiple>
+                                <% roles.forEach(role => { %>
+                                    <% if (role.name !== '@everyone') { %>
+                                    <option value="<%= role.id %>" <%= guild.config.automod && Array.isArray(guild.config.automod.ignoreRoles) && guild.config.automod.ignoreRoles.includes(role.id) ? 'selected' : '' %>><%= role.name %></option>
+                                    <% } %>
+                                <% }); %>
+                            </select>
+                            <div id="ignoreRolesSelected" class="mt-1 text-secondary small"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="automodIgnoreChannels" class="form-label">Ignorar canales (opcional)</label>
+                            <select class="form-select" id="automodIgnoreChannels" name="automodIgnoreChannels" multiple>
+                                <% channels.forEach(channel => { %>
+                                    <% if (channel.type === 0) { %>
+                                        <option value="<%= channel.id %>" <%= guild.config.automod && Array.isArray(guild.config.automod.ignoreChannels) && guild.config.automod.ignoreChannels.includes(channel.id) ? 'selected' : '' %>><%= channel.name %></option>
+                                    <% } %>
+                                <% }); %>
+                            </select>
+                            <div id="ignoreChannelsSelected" class="mt-1 text-secondary small"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="automodMuteMinutes" class="form-label">Minutos de muteo (si aplica)</label>
+                            <input type="number" class="form-control" id="automodMuteMinutes" name="automodMuteMinutes"
+                                min="1" max="1440"
+                                value="<%= guild.config.automod && guild.config.automod.muteMinutes ? guild.config.automod.muteMinutes : 10 %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="automodLogChannelId" class="form-label">Canal de logs</label>
+                            <select class="form-select" id="automodLogChannelId" name="automodLogChannelId">
+                                <option value="">Ninguno</option>
+                                <% channels.forEach(channel=> { %>
+                                    <% if (channel.type===0) { %>
+                                        <option value="<%= channel.id %>" <%=guild.config.automod &&
+                                            guild.config.automod.logChannelId===channel.id ? 'selected' : '' %>><%=
+                                                channel.name %>
+                                        </option>
+                                        <% } %>
+                                            <% }); %>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar configuración AutoMod</button>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const success = urlParams.get('success');
+                const error = urlParams.get('error');
+                const placeholder = document.getElementById('alert-placeholder');
+
+                if (success) {
+                    const wrapper = document.createElement('div');
+                    wrapper.innerHTML = [
+                        '<div class="alert alert-success alert-dismissible" role="alert">',
+                        '   <div>Settings saved successfully!</div>',
+                        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                        '</div>'
+                    ].join('');
+                    placeholder.append(wrapper);
+                } else if (error) {
+                    const wrapper = document.createElement('div');
+                    wrapper.innerHTML = [
+                        '<div class="alert alert-danger alert-dismissible" role="alert">',
+                        '   <div>There was an error saving the settings.</div>',
+                        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                        '</div>'
+                    ].join('');
+                    placeholder.append(wrapper);
+                }
+
+                // Remove the query parameters from the URL
+                if (success || error) {
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                }
+            });
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script>
+        // Inicializar Select2 en selects múltiples de AutoMod
+        $(document).ready(function() {
+            // Inicializar Select2
+            const $apply = $('#automodApplyToRoles');
+            const $ignore = $('#automodIgnoreRoles');
+            const $channels = $('#automodIgnoreChannels');
+            if ($apply.length) $apply.select2({ placeholder: 'Selecciona uno o más...', width: '100%', allowClear: true, closeOnSelect: false, dropdownAutoWidth: true });
+            if ($ignore.length) $ignore.select2({ placeholder: 'Selecciona uno o más...', width: '100%', allowClear: true, closeOnSelect: false, dropdownAutoWidth: true });
+            if ($channels.length) $channels.select2({ placeholder: 'Selecciona uno o más...', width: '100%', allowClear: true, closeOnSelect: false, dropdownAutoWidth: true });
+
+            // Evitar selección cruzada entre aplicar e ignorar roles
+            function updateRoleDisables() {
+                const applyVals = $apply.val() || [];
+                const ignoreVals = $ignore.val() || [];
+                // Deshabilitar en aplicar los que están en ignorar
+                $apply.find('option').each(function() {
+                    $(this).prop('disabled', ignoreVals.includes(this.value));
+                });
+                // Deshabilitar en ignorar los que están en aplicar
+                $ignore.find('option').each(function() {
+                    $(this).prop('disabled', applyVals.includes(this.value));
+                });
+                $apply.trigger('change.select2');
+                $ignore.trigger('change.select2');
+            }
+            $apply.on('change', updateRoleDisables);
+            $ignore.on('change', updateRoleDisables);
+            updateRoleDisables();
+        });
+        </script>
+        <%- include('partials/footer') %>

@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="container mt-4">
+    <h2>Manage Reaction Role Message</h2>
+    <p><strong>Message ID:</strong> <%= reactionRole.messageId %></p>
+    <p><strong>Channel:</strong> #<%= channels.find(c => c.id === reactionRole.channelId) ? channels.find(c => c.id === reactionRole.channelId).name : 'Unknown' %></p>
+
+    <hr>
+
+    <h4>Add Reaction Role</h4>
+    <form action="/servers/<%= currentGuild.id %>/reaction-roles/<%= reactionRole.messageId %>/add" method="POST">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="emoji" class="form-label">Emoji</label>
+                <input type="text" class="form-control" id="emoji" name="emoji" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select class="form-select" id="role" name="role" required>
+                    <option value="">Select Role</option>
+                    <% roles.forEach(role => { %>
+                        <% if (!role.managed && role.name !== '@everyone') { %>
+                            <option value="<%= role.id %>"><%= role.name %></option>
+                        <% } %>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="col-md-2 mb-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+        </div>
+    </form>
+
+    <hr>
+
+    <h4>Current Reaction Roles</h4>
+    <% if (reactionRole.reactions && reactionRole.reactions.length > 0) { %>
+        <ul class="list-group">
+            <% reactionRole.reactions.forEach(reaction => { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><%= reaction.emoji %> -> <%= roles.find(r => r.id === reaction.roleId) ? '@' + roles.find(r => r.id === reaction.roleId).name : 'Unknown' %></span>
+                    <form action="/servers/<%= currentGuild.id %>/reaction-roles/<%= reactionRole.messageId %>/remove" method="POST">
+                        <input type="hidden" name="emoji" value="<%= reaction.emoji %>">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No reaction roles configured for this message.</p>
+    <% } %>
+
+</div>
+
+<%- include('partials/footer') %>

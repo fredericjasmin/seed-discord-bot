@@ -1,0 +1,69 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="container mt-4">
+    <h1 class="mb-4">Servers</h1>
+    <p>Manage the servers where the bot is present or invite it to others.</p>
+
+    <% if (botInGuilds && botInGuilds.length > 0) { %>
+    <h2 class="mt-5">Servers with the Bot</h2>
+        <div class="row">
+            <% botInGuilds.forEach(guild => { %>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="guild-card">
+                        <% if (guild.icon) { %>
+                            <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png?size=128" alt="<%= guild.name %> Icon" class="guild-icon">
+                        <% } else { %>
+                            <div class="guild-icon-default">
+                                <%= guild.name.charAt(0) %>
+                            </div>
+                        <% } %>
+                        <div class="guild-card-body">
+                            <h5 class="guild-name"><%= guild.name %></h5>
+                            <a href="/servers/<%= guild.id %>/settings" class="btn btn-primary">Manage</a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <div class="alert alert-info mt-4" role="alert">
+            The bot is not in any of your manageable servers.
+        </div>
+    <% } %>
+
+    <% if (botNotInGuilds && botNotInGuilds.length > 0) { %>
+    <h2 class="mt-5">Servers without the Bot</h2>
+        <div class="row">
+            <% botNotInGuilds.forEach(guild => { %>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="guild-card">
+                        <% if (guild.icon) { %>
+                            <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png?size=128" alt="<%= guild.name %> Icon" class="guild-icon">
+                        <% } else { %>
+                            <div class="guild-icon-default">
+                                <%= guild.name.charAt(0) %>
+                            </div>
+                        <% } %>
+                        <div class="guild-card-body">
+                            <h5 class="guild-name"><%= guild.name %></h5>
+                            <a href="https://discord.com/oauth2/authorize?client_id=<%= botClientId %>&permissions=8&scope=bot%20applications.commands&guild_id=<%= guild.id %>&disable_guild_select=true" class="btn btn-success" target="_blank">Invite Bot</a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <div class="alert alert-info mt-4" role="alert">
+            You have no more manageable servers where the bot is not present.
+        </div>
+    <% } %>
+
+    <% if ((!botInGuilds || botInGuilds.length === 0) && (!botNotInGuilds || botNotInGuilds.length === 0)) { %>
+        <div class="alert alert-warning mt-4" role="alert">
+            No manageable servers found. Make sure you are logged in with the correct account and have "Manage Server" permissions in at least one server.
+        </div>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

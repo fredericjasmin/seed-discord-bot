@@ -1,0 +1,46 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<h1>Bot Information</h1>
+<p class="text-muted">Technical and development details about the bot.</p>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="stat-card">
+            <h5 class="card-title">Project</h5>
+            <p class="card-text fs-4">Seed</p>
+            <p class="card-text fs-6 text-muted">Open-source Discord bot template</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card">
+            <h5 class="card-title">Node.js Version</h5>
+            <p class="card-text fs-4"><%= nodeVersion %></p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card">
+            <h5 class="card-title">Discord.js Version</h5>
+            <p class="card-text fs-4"><%= djsVersion %></p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card">
+            <h5 class="card-title">Uptime</h5>
+            <p class="card-text fs-4"><%= uptime %></p>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <h2>Acknowledgements</h2>
+    <p>This bot was created with the help of the open source community and the following main libraries:</p>
+    <ul>
+        <li>Discord.js</li>
+        <li>Express.js</li>
+        <li>Mongoose</li>
+        <li>EJS</li>
+    </ul>
+</div>
+
+<%- include('partials/footer') %>

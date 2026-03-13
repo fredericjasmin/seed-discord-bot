@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <% if (message) { %>
+        <div class="alert alert-<%= messageType %>" role="alert">
+            <%= message %>
+        </div>
+    <% } %>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Shop Management</h5>
+                    <p class="card-text">Add, edit, and delete items in the bot's shop.</p>
+                    <a href="/admin/shop" class="btn btn-primary">Go to Shop Management</a>
+                </div>
+            </div>
+        </div>
+        <!-- Add more admin modules here -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Coming Soon...</h5>
+                    <p class="card-text">More admin features will be available here.</p>
+                    <button class="btn btn-secondary" disabled>Coming Soon</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
