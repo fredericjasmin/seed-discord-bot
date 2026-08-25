@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType, EmbedBuilder } = require("discord.js");
 
 module.exports = {
     name: "clear",
-    description: "[🗑️ MODERATION] Clear a number of messages from the channel.",
+    description: "Clear a number of messages from the channel.",
     options: [
         {
             type: ApplicationCommandOptionType.Integer,

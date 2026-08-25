@@ -4,7 +4,7 @@ const User = require('../../../models/Economy');
 
 module.exports = {
   name: "work",
-  description: "[💼 ECONOMY] Work to earn some coins!",
+  description: "Work to earn some coins!",
   cooldown: "5h", // 5-hour cooldown for working
   run: async (client, interaction) => {
     const userId = interaction.user.id;

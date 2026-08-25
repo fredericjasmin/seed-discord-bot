@@ -3,7 +3,7 @@ const ms = require('ms');
 
 module.exports = {
     name: 'timeout',
-    description: '[🛡️ MODERATION] Aplica un aislamiento temporal (Timeout) a un miembro del servidor.',
+    description: 'Aplica un aislamiento temporal (Timeout) a un miembro del servidor.',
     userPerms: 'ModerateMembers',
     botPerms: 'ModerateMembers',
     options: [

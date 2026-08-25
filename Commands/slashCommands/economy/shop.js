@@ -4,7 +4,7 @@ const ShopItem = require('../../../models/ShopItem'); // Import the ShopItem mod
 
 module.exports = {
   name: "shop",
-  description: "[💸 ECONOMY] Browse and buy products from the shop",
+  description: "Browse and buy products from the shop",
   options: [
     {
       type: ApplicationCommandOptionType.String,

@@ -3,7 +3,7 @@ const Afk = require('../../../models/Afk');
 
 module.exports = {
     name: 'afk',
-    description: '[💤 UTILITY] Establece tu estado como ausente (AFK) con un motivo personalizado.',
+    description: 'Establece tu estado como ausente (AFK) con un motivo personalizado.',
     options: [
         {
             type: ApplicationCommandOptionType.String,

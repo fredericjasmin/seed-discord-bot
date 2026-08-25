@@ -3,7 +3,7 @@ const Level = require('../../../models/Level');
 
 module.exports = {
     name: 'leveltop',
-    description: '[📈 LEVELING] Muestra el top de usuarios con mayor nivel del servidor.',
+    description: 'Muestra el top de usuarios con mayor nivel del servidor.',
     options: [
         {
             type: ApplicationCommandOptionType.Integer,

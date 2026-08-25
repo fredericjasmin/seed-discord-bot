@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'serverinfo',
-    description: '[ℹ️ UTILITY] Get information about the server',
+    description: 'Get information about the server',
     run: async (client, interaction) => {
         const guild = interaction.guild;
         const serverEmbed = new EmbedBuilder()

@@ -11,7 +11,7 @@ const ORES_TABLE = [
 
 module.exports = {
     name: 'mine',
-    description: '[⛏️ ECONOMY] Entra a la mina con tu pico para extraer valiosos minerales y gemas.',
+    description: 'Entra a la mina con tu pico para extraer valiosos minerales y gemas.',
     cooldown: 60000, // 60 segundos
     run: async (client, interaction) => {
         let userData = await Economy.findById(interaction.user.id);

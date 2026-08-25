@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 module.exports = {
     name: 'backup',
-    description: '[💾 MODERATION] Sistema de copias de seguridad de la estructura del servidor.',
+    description: 'Sistema de copias de seguridad de la estructura del servidor.',
     userPerms: 'Administrator',
     options: [
         {

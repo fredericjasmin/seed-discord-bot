@@ -4,7 +4,7 @@ const ms = require("ms");
 
 module.exports = {
   name: "daily",
-  description: "[💸 ECONOMY] Collect your daily coins!",
+  description: "Collect your daily coins!",
   cooldown: "24h",
   run: async (client, interaction) => {
     const userId = interaction.user.id;

@@ -3,7 +3,7 @@ const Economy = require('../../../models/Economy');
 
 module.exports = {
     name: 'trade',
-    description: '[🤝 ECONOMY] Transfiere monedas de forma interactiva y segura a otro usuario.',
+    description: 'Transfiere monedas de forma interactiva y segura a otro usuario.',
     options: [
         {
             type: ApplicationCommandOptionType.User,

@@ -3,7 +3,7 @@ const User = require('../../../models/Economy');
 
 module.exports = {
   name: "withdraw",
-  description: "[💸 ECONOMY] Withdraw money from the bank.",
+  description: "Withdraw money from the bank.",
   options: [
     {
       type: ApplicationCommandOptionType.Integer,

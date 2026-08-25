@@ -3,7 +3,7 @@ const Guild = require('../../../models/Guild');
 
 module.exports = {
     name: 'serverstats',
-    description: '[📊 MODERATION] Configura o elimina los canales automáticos de estadísticas del servidor.',
+    description: 'Configura o elimina los canales automáticos de estadísticas del servidor.',
     userPerms: 'Administrator',
     options: [
         {

@@ -5,7 +5,7 @@ const getRequiredXp = (level) => Math.floor(100 * Math.pow(level, 1.5));
 
 module.exports = {
     name: 'setxp',
-    description: '[🛡️ MODERATION] Ajusta la experiencia o el nivel de un usuario en el servidor.',
+    description: 'Ajusta la experiencia o el nivel de un usuario en el servidor.',
     userPerms: 'Administrator',
     options: [
         {

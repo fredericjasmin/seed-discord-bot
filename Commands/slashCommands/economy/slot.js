@@ -3,7 +3,7 @@ const User = require('../../../models/Economy');
 
 module.exports = {
   name: "slot",
-  description: "[🎰 GAMBLING] Play the slot machine",
+  description: "Play the slot machine",
   options: [
     {
       type: ApplicationCommandOptionType.Integer,

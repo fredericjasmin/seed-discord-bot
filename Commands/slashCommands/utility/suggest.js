@@ -4,7 +4,7 @@ const Suggestion = require('../../../models/Suggestion');
 
 module.exports = {
     name: 'suggest',
-    description: '[💡 UTILITY] Envía una sugerencia para mejorar el servidor con votación comunitaria.',
+    description: 'Envía una sugerencia para mejorar el servidor con votación comunitaria.',
     options: [
         {
             type: ApplicationCommandOptionType.String,

@@ -13,7 +13,7 @@ const FISH_TABLE = [
 
 module.exports = {
     name: 'fish',
-    description: '[🎣 ECONOMY] Ve a pescar al río o al océano para ganar monedas e ítems raros.',
+    description: 'Ve a pescar al río o al océano para ganar monedas e ítems raros.',
     cooldown: 45000, // 45 segundos
     run: async (client, interaction) => {
         let userData = await Economy.findById(interaction.user.id);

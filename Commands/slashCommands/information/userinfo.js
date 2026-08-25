@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'userinfo',
-    description: '[👤 UTILITY] Get information about a user',
+    description: 'Get information about a user',
     options: [
         {
             type: ApplicationCommandOptionType.User,

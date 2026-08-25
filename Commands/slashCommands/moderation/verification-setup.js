@@ -3,7 +3,7 @@ const Guild = require('../../../models/Guild');
 
 module.exports = {
     name: 'verification-setup',
-    description: '[🛡️ MODERATION] Configura y envía el panel interactivo de verificación en un canal.',
+    description: 'Configura y envía el panel interactivo de verificación en un canal.',
     userPerms: 'Administrator',
     options: [
         {

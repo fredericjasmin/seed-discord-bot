@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'botinfo',
-    description: '[ℹ️ INFORMATION] Get information about the bot',
+    description: 'Get information about the bot',
     run: async (client, interaction) => {
         const botInfoEmbed = new EmbedBuilder()
             .setColor('#5865f2')

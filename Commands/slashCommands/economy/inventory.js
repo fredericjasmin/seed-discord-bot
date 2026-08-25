@@ -3,7 +3,7 @@ const User = require('../../../models/Economy');
 
 module.exports = {
   name: "inventory",
-  description: "[💸 ECONOMY] View your purchased products",
+  description: "View your purchased products",
   run: async (client, interaction) => {
     const user = interaction.user;
 

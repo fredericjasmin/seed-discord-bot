@@ -3,7 +3,7 @@ const User = require('../../../models/Economy');
 
 module.exports = {
   name: "rob",
-  description: "[🚨 CRIME] Attempt to rob another user",
+  description: "Attempt to rob another user",
   options: [
     {
       type: ApplicationCommandOptionType.User,

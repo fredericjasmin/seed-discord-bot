@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType, EmbedBuilder, PermissionsBitField } = requ
 
 module.exports = {
     name: 'untimeout',
-    description: '[🛡️ MODERATION] Remueve el aislamiento temporal (Timeout) de un miembro.',
+    description: 'Remueve el aislamiento temporal (Timeout) de un miembro.',
     userPerms: 'ModerateMembers',
     botPerms: 'ModerateMembers',
     options: [

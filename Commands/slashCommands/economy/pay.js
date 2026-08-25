@@ -4,7 +4,7 @@ const User = require('../../../models/Economy');
 
 module.exports = {
   name: "pay",
-  description: "[💸 ECONOMY] Send Coins to your friend!",
+  description: "Send Coins to your friend!",
   options: [
     {
       name: "user",

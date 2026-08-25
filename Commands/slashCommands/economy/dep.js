@@ -3,7 +3,7 @@ const User = require('../../../models/Economy');
 
 module.exports = {
   name: "dep",
-  description: "[💸 ECONOMY] Deposit coins into your bank.",
+  description: "Deposit coins into your bank.",
   options: [
     {
       type: ApplicationCommandOptionType.Integer,

@@ -12,7 +12,7 @@ function createProgressBar(current, total, barSize = 12) {
 
 module.exports = {
     name: 'rank',
-    description: '[📈 LEVELING] Muestra tu nivel, experiencia y progreso actual en el servidor.',
+    description: 'Muestra tu nivel, experiencia y progreso actual en el servidor.',
     options: [
         {
             type: ApplicationCommandOptionType.User,

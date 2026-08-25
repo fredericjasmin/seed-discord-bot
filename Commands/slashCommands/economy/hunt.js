@@ -11,7 +11,7 @@ const ANIMALS_TABLE = [
 
 module.exports = {
     name: 'hunt',
-    description: '[🏹 ECONOMY] Adéntrate en el bosque salvaje para cazar criaturas y ganar recompensas.',
+    description: 'Adéntrate en el bosque salvaje para cazar criaturas y ganar recompensas.',
     cooldown: 60000, // 60 segundos
     run: async (client, interaction) => {
         let userData = await Economy.findById(interaction.user.id);

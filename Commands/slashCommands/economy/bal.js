@@ -3,7 +3,7 @@ const User = require('../../../models/Economy'); // Adjust the path according to
 
 module.exports = {
   name: "bal",
-  description: "[💸 ECONOMY] Check how many coins you have!",
+  description: "Check how many coins you have!",
   options: [
     {
       type: ApplicationCommandOptionType.User,

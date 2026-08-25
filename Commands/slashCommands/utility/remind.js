@@ -4,7 +4,7 @@ const ms = require('ms');
 
 module.exports = {
     name: 'remind',
-    description: '[⏰ UTILITY] Set a reminder',
+    description: 'Set a reminder',
     options: [
         {
             type: ApplicationCommandOptionType.String,

@@ -8,7 +8,7 @@ const MONTH_NAMES = [
 
 module.exports = {
     name: 'birthday',
-    description: '[🎂 UTILITY] Registra o consulta las fechas de cumpleaños de los miembros.',
+    description: 'Registra o consulta las fechas de cumpleaños de los miembros.',
     options: [
         {
             type: ApplicationCommandOptionType.Subcommand,

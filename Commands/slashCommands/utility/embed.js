@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType, EmbedBuilder, PermissionsBitField, Channel
 
 module.exports = {
     name: 'embed',
-    description: '[🖼️ UTILITY] Diseña y envía un mensaje embed personalizado en un canal.',
+    description: 'Diseña y envía un mensaje embed personalizado en un canal.',
     userPerms: 'ManageMessages',
     options: [
         {

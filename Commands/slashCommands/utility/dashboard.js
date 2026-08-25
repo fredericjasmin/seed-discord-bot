@@ -2,7 +2,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('
 
 module.exports = {
     name: 'dashboard',
-    description: '[🌐 UTILITY] Obtén el enlace directo al Dashboard web y al panel de este servidor.',
+    description: 'Obtén el enlace directo al Dashboard web y al panel de este servidor.',
     run: async (client, interaction) => {
         const baseUrl = (process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, '');
         const guildSettingsUrl = interaction.guild ? `${baseUrl}/servers/${interaction.guild.id}/settings` : `${baseUrl}/servers`;

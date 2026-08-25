@@ -2,7 +2,7 @@ const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'avatar',
-    description: '[🖼️ UTILITY] Show the avatar of a user or server',
+    description: 'Show the avatar of a user or server',
     options: [
         {
             type: ApplicationCommandOptionType.User,

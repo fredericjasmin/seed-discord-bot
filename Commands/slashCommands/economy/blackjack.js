@@ -56,7 +56,7 @@ function renderHand(hand, hideSecond = false) {
 
 module.exports = {
     name: 'blackjack',
-    description: '[🎰 ECONOMY] Juega una partida interactiva de Blackjack contra la banca apostando monedas.',
+    description: 'Juega una partida interactiva de Blackjack contra la banca apostando monedas.',
     options: [
         {
             type: ApplicationCommandOptionType.Integer,

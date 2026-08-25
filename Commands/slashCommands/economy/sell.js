@@ -3,7 +3,7 @@ const User = require('../../../models/Economy');
 
 module.exports = {
     name: "sell",
-    description: "[💸 ECONOMY] Sell an item from your inventory.",
+    description: "Sell an item from your inventory.",
     options: [
         {
             type: ApplicationCommandOptionType.Integer,

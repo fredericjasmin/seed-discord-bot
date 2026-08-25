@@ -3,7 +3,7 @@ const Suggestion = require('../../../models/Suggestion');
 
 module.exports = {
     name: 'suggestion',
-    description: '[🛡️ MODERATION] Responde, aprueba o rechaza una sugerencia del servidor.',
+    description: 'Responde, aprueba o rechaza una sugerencia del servidor.',
     userPerms: 'ManageGuild',
     options: [
         {

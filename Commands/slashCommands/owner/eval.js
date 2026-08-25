@@ -2,7 +2,7 @@ const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = req
 
 module.exports = {
   name: "eval",
-  description: "[🔐 DEVELOPER] Execute um código JavaScript",
+  description: "Execute um código JavaScript",
   ownerOnly: true,
   run: async(client, interaction) => {
     

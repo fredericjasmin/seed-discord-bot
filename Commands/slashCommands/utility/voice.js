@@ -3,7 +3,7 @@ const { activeTempVoiceChannels } = require('../../../Events/Guild/voiceStateUpd
 
 module.exports = {
     name: 'voice',
-    description: '[🎙️ VOICE] Gestiona tu canal de voz temporal personal.',
+    description: 'Gestiona tu canal de voz temporal personal.',
     options: [
         {
             type: ApplicationCommandOptionType.Subcommand,
