@@ -1,53 +1,94 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<h1>Dashboard</h1>
-<p class="text-muted">An overview of your bot's statistics.</p>
-
-<div class="row mt-4">
-    <div class="col-md-4">
-        <div class="stat-card">
-            <h5 class="card-title">Servers</h5>
-            <p class="card-text"><%= guilds %></p>
+<!-- Hero Banner Minimalista -->
+<div class="card p-4 mb-4" style="background: linear-gradient(135deg, rgba(0, 200, 81, 0.08), rgba(22, 25, 34, 0.95)) !important;">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <img src="/images/logow.png" alt="Seed Logo" style="width: 52px; height: auto;">
+            <div>
+                <h2 class="mb-1 text-white fw-bold">Seed Bot Dashboard</h2>
+                <p class="text-muted mb-0">Panel de control y administración para tus servidores de Discord.</p>
+            </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card">
-            <h5 class="card-title">Users</h5>
-            <p class="card-text"><%= users %></p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card">
-            <h5 class="card-title">Channels</h5>
-            <p class="card-text"><%= channels %></p>
+        <div class="d-flex gap-2">
+            <% if (user) { %>
+                <a href="/servers" class="btn btn-primary"><i class="bi bi-gear me-1"></i> Mis Servidores</a>
+            <% } else { %>
+                <a href="/auth/discord" class="btn btn-primary"><i class="bi bi-discord me-1"></i> Iniciar Sesión</a>
+            <% } %>
+            <a href="/commands" class="btn btn-outline-light"><i class="bi bi-terminal me-1"></i> Ver Comandos</a>
         </div>
     </div>
 </div>
 
-<div class="mt-4">
-    <h2>Available Commands</h2>
-    <% Object.keys(commands).sort().forEach(category => { %>
-    <h4 class="mt-4 text-capitalize" style="color: var(--accent-color);"><%= category %></h4>
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Command</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% commands[category].forEach(command => { %>
-                        <tr>
-                            <td><code>/<%= command.name %></code></td>
-                            <td><%= command.description %></td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
+<!-- Estadísticas Principales -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <h6 class="card-title"><i class="bi bi-hdd-network text-success me-1"></i> Servidores</h6>
+            <p class="card-text"><%= guilds.toLocaleString() %></p>
         </div>
-    <% }) %>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <h6 class="card-title"><i class="bi bi-people text-info me-1"></i> Usuarios Totales</h6>
+            <p class="card-text"><%= users.toLocaleString() %></p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <h6 class="card-title"><i class="bi bi-hash text-warning me-1"></i> Canales</h6>
+            <p class="card-text"><%= channels.toLocaleString() %></p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <h6 class="card-title"><i class="bi bi-terminal text-primary me-1"></i> Comandos Slash</h6>
+            <p class="card-text"><%= commandsCount %></p>
+        </div>
+    </div>
+</div>
+
+<!-- Resumen de Módulos Activos -->
+<h4 class="text-white mb-3 fw-bold" style="font-size: 1.15rem;">Módulos del Sistema</h4>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <h6 class="text-white mb-1"><i class="bi bi-shield-lock text-success me-2"></i>Seguridad & AutoMod</h6>
+            <p class="text-muted small mb-0">Filtro de palabras, enlaces, invitaciones, verificación anti-raid y backups del servidor.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <h6 class="text-white mb-1"><i class="bi bi-graph-up-arrow text-warning me-2"></i>Niveles & Recompensas</h6>
+            <p class="text-muted small mb-0">Ganancia de XP por mensajes, tarjetas de rango personalizadas y asignación de roles por nivel.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <h6 class="text-white mb-1"><i class="bi bi-mic text-info me-2"></i>Canales de Voz Temporales</h6>
+            <p class="text-muted small mb-0">Salas de voz privadas automáticas Join-to-Create con gestión de permisos por comando.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <h6 class="text-white mb-1"><i class="bi bi-ticket-perforated text-danger me-2"></i>Tickets de Soporte</h6>
+            <p class="text-muted small mb-0">Paneles de atención al cliente con botones, roles de staff y transcripciones automáticas.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <h6 class="text-white mb-1"><i class="bi bi-coin text-warning me-2"></i>Economía & RPG</h6>
+            <p class="text-muted small mb-0">Pesca, minería, caza salvaje, blackjack interactivo, tienda y transferencias seguras.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-3">
+            <h6 class="text-white mb-1"><i class="bi bi-lightbulb text-primary me-2"></i>Sugerencias & Utilidades</h6>
+            <p class="text-muted small mb-0">Votaciones comunitarias en tiempo real, felicitaciones de cumpleaños y auto-respuestas.</p>
+        </div>
+    </div>
 </div>
 
 <%- include('partials/footer') %>

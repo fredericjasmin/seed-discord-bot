@@ -1,46 +1,138 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<h1>Bot Information</h1>
-<p class="text-muted">Technical and development details about the bot.</p>
+<div class="mb-4">
+    <h2 class="mb-1 text-white fw-bold">Estado del Servicio & Información</h2>
+    <p class="text-muted mb-0" style="color: #94a3b8 !important;">Monitoreo en tiempo real de la disponibilidad y salud de los sistemas del bot.</p>
+</div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="stat-card">
-            <h5 class="card-title">Project</h5>
-            <p class="card-text fs-4">Seed</p>
-            <p class="card-text fs-6 text-muted">Open-source Discord bot template</p>
+<!-- Banner de Estado General -->
+<div class="card p-3 mb-4" style="background: linear-gradient(135deg, rgba(0, 200, 81, 0.1), rgba(22, 27, 34, 0.95)) !important; border-color: rgba(0, 200, 81, 0.3) !important;">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <span class="badge rounded-circle p-2 bg-success" style="box-shadow: 0 0 8px rgba(0, 200, 81, 0.5);"></span>
+            <div>
+                <h5 class="text-white mb-0 fw-bold">Todos los sistemas operativos</h5>
+                <small class="text-muted" style="color: #cbd5e1 !important;">Servicios funcionando con normalidad y baja latencia.</small>
+            </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="stat-card">
-            <h5 class="card-title">Node.js Version</h5>
-            <p class="card-text fs-4"><%= nodeVersion %></p>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="stat-card">
-            <h5 class="card-title">Discord.js Version</h5>
-            <p class="card-text fs-4"><%= djsVersion %></p>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="stat-card">
-            <h5 class="card-title">Uptime</h5>
-            <p class="card-text fs-4"><%= uptime %></p>
+        <div>
+            <span class="badge bg-dark border border-secondary text-success px-3 py-2" style="font-size: 0.85rem;">
+                <i class="bi bi-shield-check me-1"></i> Estado Óptimo
+            </span>
         </div>
     </div>
 </div>
 
-<div class="mt-4">
-    <h2>Acknowledgements</h2>
-    <p>This bot was created with the help of the open source community and the following main libraries:</p>
-    <ul>
-        <li>Discord.js</li>
-        <li>Express.js</li>
-        <li>Mongoose</li>
-        <li>EJS</li>
-    </ul>
+<!-- Tarjetas de Métricas -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card p-3">
+            <h6 class="card-title"><i class="bi bi-clock-history text-success me-1"></i> Tiempo Activo</h6>
+            <p class="card-text fs-5"><%= uptime %></p>
+            <small class="text-muted" style="font-size: 0.75rem;">Sin interrupciones</small>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card p-3">
+            <h6 class="card-title"><i class="bi bi-activity text-info me-1"></i> Latencia API</h6>
+            <p class="card-text fs-4 <%= ping < 100 ? 'text-success' : 'text-warning' %>"><%= ping %> ms</p>
+            <small class="text-muted" style="font-size: 0.75rem;">Respuesta en tiempo real</small>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card p-3">
+            <h6 class="card-title"><i class="bi bi-hdd-network text-warning me-1"></i> Servidores</h6>
+            <p class="card-text fs-4"><%= guilds.toLocaleString() %></p>
+            <small class="text-muted" style="font-size: 0.75rem;">Comunidades conectadas</small>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card p-3">
+            <h6 class="card-title"><i class="bi bi-people text-primary me-1"></i> Miembros</h6>
+            <p class="card-text fs-4"><%= users.toLocaleString() %></p>
+            <small class="text-muted" style="font-size: 0.75rem;">Usuarios atendidos</small>
+        </div>
+    </div>
+</div>
+
+<!-- Estado de Módulos y Servicios -->
+<div class="card p-4 mb-4">
+    <h5 class="text-white mb-3"><i class="bi bi-diagram-3 text-success me-2"></i>Estado de los Servicios</h5>
+    
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="p-3 bg-dark border border-secondary rounded d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-discord text-primary fs-5"></i>
+                    <div>
+                        <div class="text-white fw-medium small">Gateway de Discord</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Conexión WebSocket persistente</div>
+                    </div>
+                </div>
+                <span class="badge bg-success">Operativo</span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="p-3 bg-dark border border-secondary rounded d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-database text-warning fs-5"></i>
+                    <div>
+                        <div class="text-white fw-medium small">Almacenamiento & Datos</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Sincronización en la nube</div>
+                    </div>
+                </div>
+                <span class="badge bg-success"><%= dbStatus %></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="p-3 bg-dark border border-secondary rounded d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-check text-success fs-5"></i>
+                    <div>
+                        <div class="text-white fw-medium small">Seguridad & Moderación</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">AutoMod y Verificación activa</div>
+                    </div>
+                </div>
+                <span class="badge bg-success">Activo</span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="p-3 bg-dark border border-secondary rounded d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-coin text-warning fs-5"></i>
+                    <div>
+                        <div class="text-white fw-medium small">Economía & Juegos RPG</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Minijuegos, Pesca y Tienda</div>
+                    </div>
+                </div>
+                <span class="badge bg-success">Activo</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enlaces rápidos -->
+<div class="card p-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+            <h6 class="text-white mb-1">¿Deseas añadir el bot a tu servidor?</h6>
+            <p class="text-muted small mb-0">Comienza a proteger y dinamizar tu comunidad en segundos.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <% if (botClientId) { %>
+                <a href="https://discord.com/oauth2/authorize?client_id=<%= botClientId %>&permissions=8&scope=bot%20applications.commands" target="_blank" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Invitar Seed Bot
+                </a>
+            <% } %>
+            <a href="/commands" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-terminal me-1"></i> Explorar Comandos
+            </a>
+        </div>
+    </div>
 </div>
 
 <%- include('partials/footer') %>

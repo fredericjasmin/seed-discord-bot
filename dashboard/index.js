@@ -18,7 +18,7 @@ module.exports = (client) => {
 
     // --- AUTHENTICATION SETUP ---
     app.use(session({
-        secret: process.env.SESSION_SECRET,
+        secret: process.env.SESSION_SECRET || 'seed_bot_default_super_secret_session_key_12345',
         resave: false,
         saveUninitialized: false,
     }));

@@ -12,6 +12,7 @@ const getBotStats = (client) => (req, res) => {
 const getBotCommands = (client) => (req, res) => {
     const commands = client.slashCommands.map(command => ({
         name: command.name,
+        description: command.description || 'Sin descripción',
         category: command.category || 'No Category'
     }));
     res.json(commands);
@@ -19,7 +20,7 @@ const getBotCommands = (client) => (req, res) => {
 
 const getBotLeaderboard = async (req, res) => {
     try {
-        const leaderboard = await Economy.find().sort({ balance: -1 }).limit(10);
+        const leaderboard = await Economy.find().sort({ coins: -1, bank: -1 }).limit(10);
         res.json(leaderboard);
     } catch (error) {
         console.error('Error fetching leaderboard from DB:', error);

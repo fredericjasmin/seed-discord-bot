@@ -19,5 +19,12 @@ module.exports = {
         } catch (err) {
             console.error('Error starting giveaway manager:', err);
         }
+
+        // Start server stats and birthday manager
+        try {
+            require('./statsAndBirthdayManager')(client);
+        } catch (err) {
+            console.error('Error starting stats/birthday manager:', err);
+        }
     },
 };

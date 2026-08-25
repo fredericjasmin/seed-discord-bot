@@ -1,41 +1,57 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<h1>Economy Leaderboard</h1>
-<p class="text-muted">The richest users in the bot, ranked by bank money.</p>
+<div class="mb-4">
+    <h2 class="mb-1 text-white">Clasificación Global</h2>
+    <p class="text-muted mb-0">Los usuarios con más fortuna económica acumulada.</p>
+</div>
 
-<div class="table-responsive mt-4">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>User</th>
-                <th>Wallet</th>
-                <th>Bank</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% leaderboard.forEach(user => { %>
+<div class="card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
                 <tr>
-                    <td><%= user.rank %></td>
-                    <td class="d-flex align-items-center">
-                        <% if (user.avatar) { %>
-                            <img src="<%= user.avatar %>" alt="Avatar" width="50" height="50" style="border-radius: 50%; margin-right: 15px;">
-                        <% } else { %>
-                            <div style="width: 50px; height: 50px; background-color: #3a3d52; border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                                <%= user.username ? user.username.charAt(0) : '-' %>
-                            </div>
-                        <% } %>
-                        <span><%= user.username || '-' %></span>
-                    </td>
-                    <td><%= user.coins.toLocaleString() %> 🪙</td>
-                    <td><%= user.bank.toLocaleString() %> 🏦</td>
-                    <td><strong><%= (user.coins + user.bank).toLocaleString() %></strong></td>
+                    <th style="width: 80px;">Rango</th>
+                    <th>Usuario</th>
+                    <th>Cartera</th>
+                    <th>Banco</th>
+                    <th>Total Acumulado</th>
                 </tr>
-            <% }) %>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <% leaderboard.forEach(user => { %>
+                    <tr>
+                        <td>
+                            <% if (user.rank === 1) { %>
+                                <span class="badge bg-warning text-dark">🥇 #1</span>
+                            <% } else if (user.rank === 2) { %>
+                                <span class="badge bg-secondary text-white">🥈 #2</span>
+                            <% } else if (user.rank === 3) { %>
+                                <span class="badge bg-dark border border-secondary text-warning">🥉 #3</span>
+                            <% } else { %>
+                                <span class="text-muted">#<%= user.rank %></span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <% if (user.avatar) { %>
+                                    <img src="<%= user.avatar %>" alt="Avatar" width="34" height="34" class="rounded-circle me-2" style="object-fit: cover;">
+                                <% } else { %>
+                                    <div class="rounded-circle me-2 d-flex align-items-center justify-content-center bg-dark text-muted border border-secondary" style="width: 34px; height: 34px; font-size: 0.85rem;">
+                                        <%= (user.username || 'U').charAt(0) %>
+                                    </div>
+                                <% } %>
+                                <span class="text-white fw-medium"><%= user.username || '-' %></span>
+                            </div>
+                        </td>
+                        <td><span class="text-muted">🪙</span> <%= (user.coins || 0).toLocaleString() %></td>
+                        <td><span class="text-muted">🏦</span> <%= (user.bank || 0).toLocaleString() %></td>
+                        <td><strong class="text-success"><%= ((user.coins || 0) + (user.bank || 0)).toLocaleString() %></strong></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <%- include('partials/footer') %>

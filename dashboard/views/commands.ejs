@@ -1,0 +1,82 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h2 class="mb-1 text-white fw-bold">Comandos del Bot</h2>
+        <p class="text-muted mb-0" style="color: #94a3b8 !important;">Explora todos los comandos slash disponibles (<strong class="text-white"><%= totalCommands %></strong> comandos en total).</p>
+    </div>
+    <div style="min-width: 280px;">
+        <div class="input-group">
+            <span class="input-group-text bg-dark border-secondary text-light" style="background-color: #161b22 !important; border-color: #30363d !important;"><i class="bi bi-search"></i></span>
+            <input type="text" id="commandSearch" class="form-control" placeholder="Buscar comando o función..." style="background-color: #161b22 !important; border-color: #30363d !important; color: #f0f6fc !important;">
+        </div>
+    </div>
+</div>
+
+<div id="commandsContainer">
+    <% Object.keys(commands).sort().forEach(category => { %>
+        <div class="category-block mb-4" data-category="<%= category %>">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge bg-dark border border-secondary text-success me-2 px-2 py-1" style="font-size: 0.85rem; border-color: #30363d !important;"><%= category.toUpperCase() %></span>
+                <span class="text-muted small" style="color: #94a3b8 !important;">(<%= commands[category].length %> comandos)</span>
+            </div>
+
+            <div class="row g-3">
+                <% commands[category].forEach(command => { %>
+                    <div class="col-lg-4 col-md-6 command-item" data-name="<%= command.name %>" data-desc="<%= (command.description || '').toLowerCase() %>">
+                        <div class="card h-100 p-3" style="background-color: #161b22 !important; border-color: #30363d !important;">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-dark border" style="font-size: 0.95rem; color: #00C851; border-color: #30363d !important;">
+                                    /<%= command.name %>
+                                </span>
+                                <% if (command.userPerms) { %>
+                                    <span class="badge bg-danger" style="font-size: 0.7rem;"><%= command.userPerms %></span>
+                                <% } %>
+                            </div>
+                            <p class="command-description mb-0 flex-grow-1"><%= command.description || 'Sin descripción disponible.' %></p>
+                            <% if (command.options && command.options.length > 0) { %>
+                                <div class="mt-3 pt-2 border-top small" style="border-color: #30363d !important; color: #94a3b8;">
+                                    <strong class="text-white">Opciones:</strong> <span style="color: #cbd5e1;"><%= command.options.map(o => `${o.name}${o.required ? '*' : ''}`).join(', ') %></span>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    <% }); %>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('commandSearch');
+        const items = document.querySelectorAll('.command-item');
+        const categories = document.querySelectorAll('.category-block');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            items.forEach(item => {
+                const name = item.getAttribute('data-name');
+                const desc = item.getAttribute('data-desc');
+                if (name.includes(query) || desc.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            categories.forEach(cat => {
+                const visibleItems = cat.querySelectorAll('.command-item[style="display: block;"], .command-item:not([style*="display: none"])');
+                if (visibleItems.length === 0 && query !== '') {
+                    cat.style.display = 'none';
+                } else {
+                    cat.style.display = 'block';
+                }
+            });
+        });
+    });
+</script>
+
+<%- include('partials/footer') %>

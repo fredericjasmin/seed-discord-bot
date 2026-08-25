@@ -1,42 +1,48 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<div class="container mt-5">
-    <h1 class="mb-4 text-center">Shop</h1>
-
-    <% if (message) { %>
-        <div class="alert alert-<%= messageType === 'success' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
-            <%= message %>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <% } %>
-
-    <% if (products && products.length > 0) { %>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <% products.forEach(product => { %>
-                <div class="col">
-                    <div class="card h-100 shadow-sm product-card">
-                        <img src="https://via.placeholder.com/150" class="card-img-top" alt="<%= product.name %> Placeholder Image">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-center"><%= product.name %></h5>
-                            <p class="card-text flex-grow-1 text-muted"><%= product.description %></p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
-                                <h6 class="mb-0"><strong>Price:</strong> <%= product.price.toLocaleString('en-US') %> Coins</h6>
-                                <form action="/shop/buy" method="POST">
-                                    <input type="hidden" name="productId" value="<%= product.id %>">
-                                    <button type="submit" class="btn btn-primary btn-sm">Buy Now</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <% }); %>
-        </div>
-    <% } else { %>
-        <div class="alert alert-info text-center" role="alert">
-            No items available in the shop yet. Check back later!
-        </div>
-    <% } %>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h2 class="mb-1 text-white">Tienda de Artículos</h2>
+        <p class="text-muted mb-0">Compra roles, ítems y mejoras exclusivas con tus monedas de economía.</p>
+    </div>
 </div>
+
+<% if (message) { %>
+    <div class="alert alert-<%= messageType === 'success' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
+        <i class="bi <%= messageType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' %> me-2"></i> <%= message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>
+
+<% if (products && products.length > 0) { %>
+    <div class="row g-3">
+        <% products.forEach(product => { %>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 p-3 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="text-white mb-0"><%= product.name %></h5>
+                            <span class="badge bg-dark border border-secondary text-warning">
+                                🪙 <%= product.price.toLocaleString() %>
+                            </span>
+                        </div>
+                        <p class="text-muted small mb-3"><%= product.description || 'Sin descripción.' %></p>
+                    </div>
+                    <form action="/shop/buy" method="POST" class="mt-auto pt-2 border-top border-secondary">
+                        <input type="hidden" name="productId" value="<%= product.id %>">
+                        <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-cart-plus me-1"></i> Comprar Artículo</button>
+                    </form>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <div class="card p-4 text-center">
+        <i class="bi bi-bag-x text-muted display-5 mb-2"></i>
+        <h5 class="text-white">No hay productos disponibles</h5>
+        <p class="text-muted small mb-0">El administrador aún no ha añadido artículos a la tienda global.</p>
+    </div>
+<% } %>
 
 <%- include('partials/footer') %>

@@ -3,31 +3,30 @@ const Guild = require('../../models/Guild');
 const Giveaway = require('../../models/Giveaway');
 const emoji = require('node-emoji');
 
-const getServersPage = (client) => (req, res) => {
-    const MANAGE_GUILD_PERMISSION = 0x20;
-    const ADMINISTRATOR_PERMISSION = 0x8;
-    const userGuilds = req.user.guilds;
-    const botGuilds = client.guilds.cache;
+const MANAGE_GUILD_PERMISSION = 0x20n;
+const ADMINISTRATOR_PERMISSION = 0x8n;
 
-    const manageableGuilds = userGuilds.filter(userGuild => {
-        // Handle both permission fields and formats
-        let perms = 0;
-        if (userGuild.permissions_new) {
-            perms = typeof userGuild.permissions_new === 'string' 
-                ? parseInt(userGuild.permissions_new) 
-                : Number(userGuild.permissions_new);
-        } else if (userGuild.permissions) {
-            perms = typeof userGuild.permissions === 'string' 
-                ? parseInt(userGuild.permissions) 
-                : Number(userGuild.permissions);
-        }
-        
-        // Check for both Manage Guild and Administrator permissions
+function canManageGuild(userGuild) {
+    if (!userGuild) return false;
+    if (userGuild.owner === true) return true;
+
+    try {
+        const rawPerms = userGuild.permissions_new ?? userGuild.permissions ?? 0;
+        const perms = BigInt(rawPerms);
         const hasManageGuild = (perms & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
         const hasAdministrator = (perms & ADMINISTRATOR_PERMISSION) === ADMINISTRATOR_PERMISSION;
-        
         return hasManageGuild || hasAdministrator;
-    });
+    } catch (e) {
+        const intPerms = parseInt(userGuild.permissions_new || userGuild.permissions || 0);
+        return (intPerms & 0x20) === 0x20 || (intPerms & 0x8) === 0x8;
+    }
+}
+
+const getServersPage = (client) => (req, res) => {
+    const userGuilds = req.user && Array.isArray(req.user.guilds) ? req.user.guilds : [];
+    const botGuilds = client.guilds.cache;
+
+    const manageableGuilds = userGuilds.filter(userGuild => canManageGuild(userGuild));
 
     const botInGuilds = [];
     const botNotInGuilds = [];
@@ -50,39 +49,18 @@ const getServersPage = (client) => (req, res) => {
 
 const getGuildSettingsPage = (client) => async (req, res) => {
     const guildId = req.params.guildId;
-    const MANAGE_GUILD_PERMISSION = 0x20;
+    const userGuilds = req.user && Array.isArray(req.user.guilds) ? req.user.guilds : [];
 
     // Check if the user is in this guild and has manage guild permissions
-    const userGuild = req.user.guilds.find(g => String(g.id) === String(guildId));
-    if (!userGuild) {
-        return res.status(403).send('You do not have permission to manage this server.');
-    }
-    
-    // Handle both permission fields and formats
-    let perms = 0;
-    if (userGuild.permissions_new) {
-        perms = typeof userGuild.permissions_new === 'string' 
-            ? parseInt(userGuild.permissions_new) 
-            : Number(userGuild.permissions_new);
-    } else if (userGuild.permissions) {
-        perms = typeof userGuild.permissions === 'string' 
-            ? parseInt(userGuild.permissions) 
-            : Number(userGuild.permissions);
-    }
-    
-    // Check for both Manage Guild and Administrator permissions
-    const ADMINISTRATOR_PERMISSION = 0x8;
-    const hasManageGuild = (perms & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
-    const hasAdministrator = (perms & ADMINISTRATOR_PERMISSION) === ADMINISTRATOR_PERMISSION;
-    
-    if (!hasManageGuild && !hasAdministrator) {
-        return res.status(403).send('You do not have permission to manage this server.');
+    const userGuild = userGuilds.find(g => String(g.id) === String(guildId));
+    if (!userGuild || !canManageGuild(userGuild)) {
+        return res.status(403).send('No tienes permisos de Administrador o Gestionar Servidor en este servidor.');
     }
 
     // Check if the bot is in this guild
     const botGuild = client.guilds.cache.get(guildId);
     if (!botGuild) {
-        return res.status(404).send('The bot is not in this server.');
+        return res.status(404).send('El bot no está presente en este servidor.');
     }
 
     // Fetch guild data from your database
@@ -115,10 +93,18 @@ const getGuildSettingsPage = (client) => async (req, res) => {
     if (!guildData.config.reactionRoles) {
         guildData.config.reactionRoles = [];
     }
+    if (!guildData.config.leveling) {
+        guildData.config.leveling = { enabled: false, levelRoles: [], ignoredChannels: [] };
+    }
+    if (!guildData.config.tempVoice) {
+        guildData.config.tempVoice = { enabled: false, userLimit: 0, defaultName: "🔊 Sala de {user.username}" };
+    }
+    if (!guildData.config.suggestions) {
+        guildData.config.suggestions = { enabled: false, dmNotification: true };
+    }
     await guildData.save();
 
     // Fetch all channels and roles for the guild
-    const channels = botGuild.channels.cache.filter(c => c.type === 0 || c.type === 4);
     const roles = botGuild.roles.cache.filter(r => !r.managed && r.name !== '@everyone');
 
     // Fetch giveaways for this guild
@@ -134,54 +120,19 @@ const getGuildSettingsPage = (client) => async (req, res) => {
     });
 };
 
-// AQUÍ ESTÁ LA CORRECCIÓN: Agregar el parámetro client
 const postGuildSettings = (client) => async (req, res) => {
     const guildId = req.params.guildId;
-    const MANAGE_GUILD_PERMISSION = 0x20; // 32 in decimal
-
-    // Check if this looks like a Discord ID (should be 17-19 digits) or MongoDB ObjectId (24 hex chars)
-    const isDiscordId = /^\d{17,19}$/.test(guildId);
-    const isMongoObjectId = /^[0-9a-fA-F]{24}$/.test(guildId);
-    
-    if (isMongoObjectId) {
-        console.log('ERROR: Received MongoDB ObjectId instead of Discord Guild ID');
-        console.log('This suggests the route is passing the wrong parameter');
-        return res.status(400).send('ID de servidor inválido - se esperaba un ID de Discord, no un ObjectId de MongoDB');
-    }
+    const isDiscordId = /^\d{17,20}$/.test(guildId);
     
     if (!isDiscordId) {
-        console.log('ERROR: Guild ID is not in valid Discord format');
         return res.status(400).send('ID de servidor inválido - debe ser un ID de Discord válido');
     }
 
-    // Check if the user is in this guild and has manage guild permissions
-    const userGuild = req.user.guilds.find(g => String(g.id) === String(guildId));
+    const userGuilds = req.user && Array.isArray(req.user.guilds) ? req.user.guilds : [];
+    const userGuild = userGuilds.find(g => String(g.id) === String(guildId));
     
-    if (!userGuild) {
-        return res.status(403).send('No tienes permisos para gestionar este servidor - Guild not found.');
-    }
-    
-    // Try both permission fields and handle both string and number formats
-    let perms = 0;
-    if (userGuild.permissions_new) {
-        // Use the new permissions field if available
-        perms = typeof userGuild.permissions_new === 'string' 
-            ? parseInt(userGuild.permissions_new) 
-            : Number(userGuild.permissions_new);
-    } else if (userGuild.permissions) {
-        // Fall back to old permissions field
-        perms = typeof userGuild.permissions === 'string' 
-            ? parseInt(userGuild.permissions) 
-            : Number(userGuild.permissions);
-    }
-    
-    // Check for Administrator permission (0x8) as well, since admins can manage everything
-    const ADMINISTRATOR_PERMISSION = 0x8;
-    const hasManageGuild = (perms & MANAGE_GUILD_PERMISSION) === MANAGE_GUILD_PERMISSION;
-    const hasAdministrator = (perms & ADMINISTRATOR_PERMISSION) === ADMINISTRATOR_PERMISSION;
-    
-    if (!hasManageGuild && !hasAdministrator) {
-        return res.status(403).send(`No tienes permisos para gestionar este servidor. Permisos actuales: ${perms}`);
+    if (!userGuild || !canManageGuild(userGuild)) {
+        return res.status(403).send('No tienes permisos de Administrador o Gestionar Servidor en este servidor.');
     }
 
     // Check if the bot is in this guild
@@ -363,6 +314,155 @@ const postGuildSettings = (client) => async (req, res) => {
                 break;
             case 'ticketWelcome':
                 guildData.config.tickets.ticketWelcomeMessage = req.body.ticketWelcomeMessage || "Welcome to your ticket! A staff member will assist you soon.";
+                break;
+            case 'levelingConfig':
+                if (!guildData.config.leveling) guildData.config.leveling = {};
+                guildData.config.leveling.enabled = req.body.levelingEnabled === 'on';
+                guildData.config.leveling.channelId = req.body.levelingChannel || null;
+                guildData.config.leveling.message = req.body.levelingMessage || "🎉 ¡Felicidades {user.mention}! Has subido al nivel **{level}**!";
+                const arrLvl = v => Array.isArray(v) ? v : v ? [v] : [];
+                guildData.config.leveling.ignoredChannels = arrLvl(req.body.levelingIgnoredChannels);
+                break;
+            case 'levelRewardAdd':
+                if (!guildData.config.leveling) guildData.config.leveling = {};
+                if (!guildData.config.leveling.levelRoles) guildData.config.leveling.levelRoles = [];
+                const reqLevel = parseInt(req.body.rewardLevel);
+                const reqRoleId = req.body.rewardRole;
+                if (reqLevel && reqRoleId) {
+                    const existingIndex = guildData.config.leveling.levelRoles.findIndex(r => r.level === reqLevel);
+                    if (existingIndex !== -1) {
+                        guildData.config.leveling.levelRoles[existingIndex].roleId = reqRoleId;
+                    } else {
+                        guildData.config.leveling.levelRoles.push({ level: reqLevel, roleId: reqRoleId });
+                    }
+                    guildData.config.leveling.levelRoles.sort((a, b) => a.level - b.level);
+                }
+                break;
+            case 'levelRewardRemove':
+                if (guildData.config.leveling && guildData.config.leveling.levelRoles) {
+                    const removeLevel = parseInt(req.body.rewardLevel);
+                    guildData.config.leveling.levelRoles = guildData.config.leveling.levelRoles.filter(r => r.level !== removeLevel);
+                }
+                break;
+            case 'tempVoiceConfig':
+                if (!guildData.config.tempVoice) guildData.config.tempVoice = {};
+                guildData.config.tempVoice.enabled = req.body.tempVoiceEnabled === 'on';
+                guildData.config.tempVoice.channelId = req.body.tempVoiceChannel || null;
+                guildData.config.tempVoice.categoryId = req.body.tempVoiceCategory || null;
+                guildData.config.tempVoice.userLimit = req.body.tempVoiceUserLimit ? parseInt(req.body.tempVoiceUserLimit) : 0;
+                guildData.config.tempVoice.defaultName = req.body.tempVoiceDefaultName || "🔊 Sala de {user.username}";
+                break;
+            case 'suggestionsConfig':
+                if (!guildData.config.suggestions) guildData.config.suggestions = {};
+                guildData.config.suggestions.enabled = req.body.suggestionsEnabled === 'on';
+                guildData.config.suggestions.channelId = req.body.suggestionsChannel || null;
+                guildData.config.suggestions.dmNotification = req.body.suggestionsDmNotification === 'on';
+                break;
+            case 'verificationConfig':
+                if (!guildData.config.verification) guildData.config.verification = {};
+                guildData.config.verification.enabled = req.body.verificationEnabled === 'on';
+                guildData.config.verification.channelId = req.body.verificationChannel || null;
+                guildData.config.verification.roleId = req.body.verificationRole || null;
+                guildData.config.verification.title = req.body.verificationTitle || '🛡️ Verificación de Servidor';
+                guildData.config.verification.description = req.body.verificationDescription || 'Haz clic en el botón de abajo para verificarte y obtener acceso a todos los canales del servidor.';
+                guildData.config.verification.buttonLabel = req.body.verificationButtonLabel || 'Verificarme';
+                guildData.config.verification.buttonEmoji = req.body.verificationButtonEmoji || '✅';
+                guildData.config.verification.color = req.body.verificationColor || '#00C851';
+
+                if (req.body.sendVerificationMessage === 'on' && guildData.config.verification.channelId) {
+                    try {
+                        const targetChan = botGuild.channels.cache.get(guildData.config.verification.channelId);
+                        if (targetChan && targetChan.isTextBased && targetChan.isTextBased()) {
+                            const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+                            const vEmbed = new EmbedBuilder()
+                                .setColor(guildData.config.verification.color)
+                                .setTitle(guildData.config.verification.title)
+                                .setDescription(guildData.config.verification.description)
+                                .setFooter({ text: `${botGuild.name} • Seguridad` })
+                                .setTimestamp();
+
+                            const vRow = new ActionRowBuilder().addComponents(
+                                new ButtonBuilder()
+                                    .setCustomId('verify-server-member')
+                                    .setLabel(guildData.config.verification.buttonLabel)
+                                    .setStyle(ButtonStyle.Success)
+                                    .setEmoji(guildData.config.verification.buttonEmoji)
+                            );
+
+                            await targetChan.send({ embeds: [vEmbed], components: [vRow] });
+                        }
+                    } catch (err) {
+                        console.error('[Dashboard] Error sending verification panel:', err);
+                    }
+                }
+                break;
+            case 'customCommandAdd':
+                if (!guildData.config.customCommands) guildData.config.customCommands = [];
+                const trig = req.body.cmdTrigger ? req.body.cmdTrigger.trim() : '';
+                const resp = req.body.cmdResponse ? req.body.cmdResponse.trim() : '';
+                if (trig && resp) {
+                    guildData.config.customCommands.push({
+                        trigger: trig,
+                        response: resp,
+                        matchType: req.body.cmdMatchType || 'exact',
+                        useEmbed: req.body.cmdUseEmbed === 'on',
+                        embedColor: req.body.cmdEmbedColor || '#5865F2'
+                    });
+                }
+                break;
+            case 'customCommandDelete':
+                if (guildData.config.customCommands && req.body.commandId) {
+                    guildData.config.customCommands = guildData.config.customCommands.filter(c => String(c._id) !== String(req.body.commandId));
+                }
+                break;
+            case 'serverStatsConfig':
+                if (!guildData.config.serverStats) guildData.config.serverStats = {};
+                guildData.config.serverStats.enabled = req.body.serverStatsEnabled === 'on';
+                guildData.config.serverStats.categoryId = req.body.serverStatsCategory || null;
+                guildData.config.serverStats.memberChannelId = req.body.serverStatsMemberChannel || null;
+                guildData.config.serverStats.botChannelId = req.body.serverStatsBotChannel || null;
+                guildData.config.serverStats.roleChannelId = req.body.serverStatsRoleChannel || null;
+                break;
+            case 'birthdaysConfig':
+                if (!guildData.config.birthdays) guildData.config.birthdays = {};
+                guildData.config.birthdays.enabled = req.body.birthdaysEnabled === 'on';
+                guildData.config.birthdays.channelId = req.body.birthdaysChannel || null;
+                guildData.config.birthdays.roleId = req.body.birthdaysRole || null;
+                guildData.config.birthdays.message = req.body.birthdaysMessage || '🎂 ¡Hoy es el cumpleaños de {user.mention}! ¡Felicidades y que cumplas muchos más! 🎉';
+                break;
+            case 'sendWebEmbed':
+                const embedChanId = req.body.webEmbedChannel;
+                const embedTitle = req.body.webEmbedTitle;
+                const embedDesc = req.body.webEmbedDescription;
+                const embedCol = req.body.webEmbedColor || '#5865F2';
+                const embedImg = req.body.webEmbedImage;
+                const embedFoot = req.body.webEmbedFooter;
+
+                if (embedChanId && embedDesc) {
+                    try {
+                        const targetChannel = botGuild.channels.cache.get(embedChanId);
+                        if (targetChannel && targetChannel.isTextBased && targetChannel.isTextBased()) {
+                            const { EmbedBuilder } = require('discord.js');
+                            const customEmb = new EmbedBuilder()
+                                .setColor(embedCol)
+                                .setDescription(embedDesc.replace(/\\n/g, '\n'))
+                                .setTimestamp();
+
+                            if (embedTitle) customEmb.setTitle(embedTitle);
+                            if (embedImg) customEmb.setImage(embedImg);
+                            if (embedFoot) customEmb.setFooter({ text: embedFoot });
+
+                            await targetChannel.send({ embeds: [customEmb] });
+                        }
+                    } catch (sendErr) {
+                        console.error('[Dashboard] Error sending web embed:', sendErr);
+                    }
+                }
+                break;
+            case 'warnRemove':
+                if (guildData.warnings && req.body.warnId) {
+                    guildData.warnings = guildData.warnings.filter(w => String(w._id) !== String(req.body.warnId));
+                }
                 break;
             default:
                 break;

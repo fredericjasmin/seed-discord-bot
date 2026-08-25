@@ -106,6 +106,74 @@ const reactionRolesConfigSchema = new Schema({ // New
     reactions: [reactionRoleEntrySchema],
 }, { _id: false });
 
+// Define the schema for leveling configuration
+const levelRoleRewardSchema = new Schema({
+    level: { type: Number, required: true },
+    roleId: { type: String, required: true }
+}, { _id: false });
+
+const levelingConfigSchema = new Schema({
+    enabled: { type: Boolean, default: false },
+    channelId: { type: String, default: null }, // null = canal actual
+    message: { type: String, default: "🎉 ¡Felicidades {user.mention}! Has subido al nivel **{level}**!" },
+    ignoredChannels: { type: [String], default: [] },
+    levelRoles: [levelRoleRewardSchema]
+}, { _id: false });
+
+// Define the schema for temporary voice channels
+const tempVoiceConfigSchema = new Schema({
+    enabled: { type: Boolean, default: false },
+    channelId: { type: String, default: null }, // Canal que al unirse crea la sala
+    categoryId: { type: String, default: null }, // Categoría donde se crean las salas
+    userLimit: { type: Number, default: 0 },
+    defaultName: { type: String, default: "🔊 Sala de {user.username}" }
+}, { _id: false });
+
+// Define the schema for suggestions
+const suggestionsConfigSchema = new Schema({
+    enabled: { type: Boolean, default: false },
+    channelId: { type: String, default: null },
+    dmNotification: { type: Boolean, default: true }
+}, { _id: false });
+
+// Define the schema for verification
+const verificationConfigSchema = new Schema({
+    enabled: { type: Boolean, default: false },
+    channelId: { type: String, default: null },
+    roleId: { type: String, default: null },
+    title: { type: String, default: '🛡️ Verificación de Servidor' },
+    description: { type: String, default: 'Haz clic en el botón de abajo para verificarte y obtener acceso a todos los canales del servidor.' },
+    buttonLabel: { type: String, default: 'Verificarme' },
+    buttonEmoji: { type: String, default: '✅' },
+    color: { type: String, default: '#00C851' }
+}, { _id: false });
+
+// Define the schema for custom auto-responses
+const customCommandSchema = new Schema({
+    trigger: { type: String, required: true },
+    response: { type: String, required: true },
+    matchType: { type: String, enum: ['exact', 'contains'], default: 'exact' },
+    useEmbed: { type: Boolean, default: false },
+    embedColor: { type: String, default: '#5865F2' }
+}, { _id: true });
+
+// Define the schema for server statistics voice channels
+const serverStatsConfigSchema = new Schema({
+    enabled: { type: Boolean, default: false },
+    categoryId: { type: String, default: null },
+    memberChannelId: { type: String, default: null },
+    botChannelId: { type: String, default: null },
+    roleChannelId: { type: String, default: null }
+}, { _id: false });
+
+// Define the schema for birthdays
+const birthdaysConfigSchema = new Schema({
+    enabled: { type: Boolean, default: false },
+    channelId: { type: String, default: null },
+    roleId: { type: String, default: null },
+    message: { type: String, default: '🎂 ¡Hoy es el cumpleaños de {user.mention}! ¡Felicidades y que cumplas muchos más! 🎉' }
+}, { _id: false });
+
 // Define the schema for a single warning
 const warningSchema = new Schema({
     userId: { type: String, required: true },
@@ -130,6 +198,13 @@ const guildSchema = new Schema({
         autoRole: autoRoleConfigSchema,
         reactionRoles: [reactionRolesConfigSchema],
         automod: automodConfigSchema,
+        leveling: { type: levelingConfigSchema, default: () => ({}) },
+        tempVoice: { type: tempVoiceConfigSchema, default: () => ({}) },
+        suggestions: { type: suggestionsConfigSchema, default: () => ({}) },
+        verification: { type: verificationConfigSchema, default: () => ({}) },
+        customCommands: [customCommandSchema],
+        serverStats: { type: serverStatsConfigSchema, default: () => ({}) },
+        birthdays: { type: birthdaysConfigSchema, default: () => ({}) },
     },
     warnings: [warningSchema],
 });
